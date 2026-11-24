@@ -1309,8 +1309,15 @@ if (typeof globalThis !== 'undefined') {
   let tries = 0;
   const timer = window.setInterval(function () {
     const pv = document.getElementById('busuanzi_site_pv');
-    if (pv && pv.textContent.trim()) {
+    const uv = document.getElementById('busuanzi_site_uv');
+    const txt = pv ? pv.textContent.trim() : '';
+    if (/^\d+$/.test(txt)) {
       line.hidden = false;
+      window.clearInterval(timer);
+    } else if (txt) {
+      // 返回了非数字（如"域名过长，已被禁用"）：清空并保持隐藏
+      if (pv) pv.textContent = '';
+      if (uv) uv.textContent = '';
       window.clearInterval(timer);
     } else if (++tries > 24) {
       window.clearInterval(timer);
