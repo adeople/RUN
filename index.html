@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>RUN · 润 | 移居路线抉择器</title>
+<style>
+  :root {
+    --bg: #f6f4ef;
+    --card: #ffffff;
+    --ink: #1b2a28;
+    --muted: #687976;
+    --line: #e6e2d8;
+    --teal: #0f766e;
+    --teal-dark: #0b5d57;
+    --teal-soft: #e7f3f1;
+    --amber: #b45309;
+    --amber-soft: #fdf3e3;
+    --red: #b91c1c;
+    --shadow: 0 18px 50px rgba(27, 42, 40, 0.08);
+    --radius: 22px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(900px 500px at 50% -160px, #dcefe9 0%, rgba(220, 239, 233, 0) 70%),
+      var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 28px 20px 44px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 26px;
+    color: var(--teal-dark);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: linear-gradient(145deg, var(--teal), #14a394);
+    color: #fff;
+    font-size: 17px;
+    box-shadow: 0 6px 16px rgba(15, 118, 110, 0.28);
+  }
+
+  .brand small {
+    display: block;
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .screen { animation: rise 0.35s ease both; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid #cfe3df;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--teal-dark);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  h1 {
+    margin: 18px 0 12px;
+    font-size: clamp(32px, 6vw, 52px);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  h1 span { color: var(--teal); }
+
+  .lead {
+    max-width: 620px;
+    margin: 0 0 24px;
+    color: var(--muted);
+    font-size: 16px;
+  }
+
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 30px;
+  }
+
+  .stat {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    padding: 10px 15px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.66);
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .stat b { color: var(--ink); font-size: 19px; line-height: 1; }
+
+  .primary, .ghost {
+    appearance: none;
+    border: 0;
+    border-radius: 14px;
+    padding: 14px 22px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+  }
+
+  .primary {
+    background: linear-gradient(145deg, var(--teal), var(--teal-dark));
+    color: #fff;
+    box-shadow: 0 10px 26px rgba(15, 118, 110, 0.24);
+  }
+
+  .primary:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(15, 118, 110, 0.3); }
+
+  .ghost {
+    background: #fff;
+    color: var(--teal-dark);
+    border: 1px solid #cfe3df;
+  }
+
+  .ghost:hover { background: var(--teal-soft); }
+
+  .primary:focus-visible, .ghost:focus-visible, .option:focus-visible, .doc-link:focus-visible {
+    outline: 3px solid rgba(15, 118, 110, 0.35);
+    outline-offset: 3px;
+  }
+
+  .fine {
+    margin: 18px 0 0;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+
+  /* ---------- 问题页 ---------- */
+  .question-card {
+    padding: clamp(22px, 4vw, 38px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card);
+    box-shadow: var(--shadow);
+  }
+
+  .progress-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .progress {
+    height: 7px;
+    margin-bottom: 28px;
+    border-radius: 999px;
+    background: #eeeae1;
+    overflow: hidden;
+  }
+
+  .progress i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--teal), #14a394);
+    transition: width 0.28s ease;
+  }
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: clamp(23px, 4vw, 31px);
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
+
+  .hint {
+    margin: 0 0 22px;
+    color: var(--muted);
+    font-size: 14.5px;
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .option {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    padding: 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    background: #fcfbf8;
+    color: var(--ink);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+  }
+
+  .option:hover {
+    border-color: #9fd0c9;
+    background: var(--teal-soft);
+    transform: translateY(-1px);
+  }
+
+  .option.selected {
+    border-color: var(--teal);
+    background: var(--teal-soft);
+  }
+
+  .opt-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: #fff;
+    font-size: 20px;
+    box-shadow: 0 2px 8px rgba(27, 42, 40, 0.06);
+  }
+
+  .opt-body { display: block; }
+
+  .opt-body b {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 14.5px;
+    line-height: 1.4;
+  }
+
+  .opt-body small {
+    display: block;
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  .opt-check {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: #fff;
+    font-size: 12px;
+    opacity: 0;
+    transform: scale(0.7);
+    transition: opacity 0.16s ease, transform 0.16s ease;
+  }
+
+  .option.selected .opt-check { opacity: 1; transform: scale(1); }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    margin-top: 22px;
+  }
+
+  .nav .fine { margin: 0; }
+
+  /* ---------- 结果页 ---------- */
+  .result-head h2 { margin-bottom: 6px; }
+
+  .answer-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 24px;
+  }
+
+  .answer-strip span {
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+
+  .result-list { display: grid; gap: 16px; }
+
+  .result-card {
+    position: relative;
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card);
+    box-shadow: 0 12px 34px rgba(27, 42, 40, 0.06);
+  }
+
+  .result-card.top {
+    border-color: #a9d8d0;
+    box-shadow: 0 20px 46px rgba(15, 118, 110, 0.14);
+  }
+
+  .rank {
+    position: absolute;
+    top: -11px;
+    left: 22px;
+    padding: 3px 12px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid #cfe3df;
+    color: var(--teal-dark);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .result-card.top .rank {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
+  }
+
+  .card-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-top: 4px;
+  }
+
+  .flag {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--teal-soft);
+    color: var(--teal-dark);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+
+  .card-head h3 {
+    margin: 0 0 2px;
+    font-size: 19px;
+    line-height: 1.35;
+  }
+
+  .card-head p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+
+  .match {
+    margin-left: auto;
+    flex: 0 0 auto;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .match.high { background: var(--teal-soft); color: var(--teal-dark); }
+  .match.mid { background: #eef3fb; color: #2458a6; }
+  .match.low { background: #f2f0ea; color: var(--muted); }
+
+  .summary {
+    margin: 14px 0;
+    color: #33433f;
+    font-size: 14.5px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .chips span {
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: #f6f4ee;
+    color: #43534f;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .reasons, .warnings {
+    display: grid;
+    gap: 5px;
+    margin: 8px 0 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+  }
+
+  .reasons { background: #f2faf8; color: #285b54; }
+  .warnings { background: var(--amber-soft); color: #7a4c0a; }
+
+  .reasons b, .warnings b { font-size: 12px; letter-spacing: 0.04em; }
+
+  .global-warning {
+    margin: 0 0 18px;
+    padding: 13px 16px;
+    border: 1px solid #f0d7ae;
+    border-radius: 14px;
+    background: var(--amber-soft);
+    color: #7a4c0a;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+
+  .result-note {
+    margin: 0 0 18px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .doc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--teal-dark);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 1px dashed #9fd0c9;
+  }
+
+  .doc-link:hover { border-bottom-style: solid; }
+
+  .result-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 26px;
+  }
+
+  footer {
+    margin-top: 38px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  footer a { color: var(--teal-dark); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer p { margin: 4px 0; overflow-wrap: anywhere; }
+
+  @media (max-width: 680px) {
+    .app { padding: 20px 14px 36px; }
+    .options { grid-template-columns: 1fr; }
+    .question-card { padding: 20px 16px; }
+    .result-card { padding: 20px 16px; }
+    .card-head { flex-wrap: wrap; }
+    .match { margin-left: 0; }
+    h1 { font-size: 34px; }
+    .stats { gap: 8px; }
+    .stat { padding: 8px 12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="brand">
+    <span class="brand-mark">润</span>
+    <span>RUN · 路线抉择器<small>relocation route finder</small></span>
+  </header>
+
+  <main id="app" aria-live="polite"></main>
+
+  <footer>
+    <p>资料源自 <a href="https://github.com/BryceYuuu/RUN" target="_blank" rel="noopener">RUN&nbsp;·&nbsp;润 · github.com/BryceYuuu/RUN</a>（路线数据 2026-10 快照），内容许可 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="noopener">CC&nbsp;BY-SA&nbsp;4.0</a></p>
+    <p>本页面为改编作品：摘取路线数据、重写文案并删减部分条目，以相同 CC BY-SA 4.0 许可提供。</p>
+    <p>仅供信息参考，不构成移民、法律、税务或投资建议；任何决定前请以各国官方页面为准。</p>
+  </footer>
+</div>
+
+<script id="logic">
+/* ============================================================
+ * 1. 题库
+ * ============================================================ */
+const QUESTIONS = [
+  {
+    key: 'income',
+    title: '你的收入主要来自哪里？',
+    hint: '先确定主线：收入来源决定了你能走哪一类签证。',
+    options: [
+      { value: 'work',    icon: '🧑‍💻', title: '目的国雇主的 offer',   desc: '去当地上班，走工作签证 / 欧盟蓝卡' },
+      { value: 'nomad',   icon: '💻',   title: '境外雇主或客户',       desc: '远程工作，收入不依赖当地公司' },
+      { value: 'startup', icon: '🚀',   title: '自己创业 / 自雇',     desc: '在当地开公司、做自由职业' },
+      { value: 'passive', icon: '🏖️',   title: '被动收入 / 退休金',   desc: '靠存款、房租、养老金生活，不工作' },
+      { value: 'invest',  icon: '💰',   title: '一笔投资资金',         desc: '用投资换居留，不打算在当地工作' },
+      { value: 'study',   icon: '🎓',   title: '先留学，再留下',       desc: '毕业后找工作转工作签' }
+    ]
+  },
+  {
+    key: 'budget',
+    title: '前期能动用的资金大概多少？',
+    hint: '不含机票和初期生活费，按“办身份 / 投资 / 学费”粗略估算。',
+    options: [
+      { value: 1, icon: '🪙', title: '5 万人民币以内',   desc: '只够基本材料、机票和短期落地' },
+      { value: 2, icon: '💵', title: '5–30 万人民币',    desc: '可覆盖数字游民、部分留学或创业前期' },
+      { value: 3, icon: '💳', title: '30–100 万人民币',  desc: '可覆盖多数留学、创业和部分被动收入路线' },
+      { value: 4, icon: '🏦', title: '100 万人民币以上', desc: '可考虑投资居留 / 黄金签证类路线' }
+    ]
+  },
+  {
+    key: 'language',
+    title: '你的语言情况？',
+    hint: '这里只影响“英语环境”和“是否要学小语种”的权重。',
+    options: [
+      { value: 'learn',       icon: '🗣️', title: '英语不错，也愿意学当地语言', desc: '适合德国、奥地利等长期路线' },
+      { value: 'englishOnly', icon: '🇬🇧', title: '英语一般，只想用英语',       desc: '优先爱尔兰、马耳他等英语环境' },
+      { value: 'none',        icon: '🙅', title: '不太想学外语',               desc: '会明显缩小可选范围' }
+    ]
+  },
+  {
+    key: 'family',
+    title: '你会带家属吗？',
+    hint: '配偶能否工作、孩子能否上学，是很多路线的硬门槛。',
+    options: [
+      { value: 0, icon: '🧍', title: '单人',           desc: '一人过去，先站稳再说' },
+      { value: 1, icon: '👫', title: '带配偶 / 伴侣', desc: '需要确认家属团聚和配偶工作权' },
+      { value: 2, icon: '👨‍👩‍👧', title: '带孩子 / 全家', desc: '需要重点看教育、医疗和家庭收入门槛' }
+    ]
+  },
+  {
+    key: 'priority',
+    title: '你最看重哪一点？',
+    hint: '没有完美路线，先选一个最不能妥协的。',
+    options: [
+      { value: 'speed',       icon: '⚡', title: '尽快拿到永居 / 身份', desc: '速度优先，可接受更高成本或语言要求' },
+      { value: 'lowCost',     icon: '🪙', title: '前期成本越低越好',     desc: '预算敏感，优先低门槛路线' },
+      { value: 'english',     icon: '🇬🇧', title: '英语环境，容易融入',  desc: '优先英语国家 / 英语友好地区' },
+      { value: 'minimalStay', icon: '🛂', title: '不想坐移民监',         desc: '住得少也能保住身份，投资 / 被动收入类优先' },
+      { value: 'easyEntry',   icon: '🚪', title: '门槛低，先过去再说',   desc: '先拿到居留，再慢慢转长期身份' }
+    ]
+  }
+];
+
+/* ============================================================
+ * 2. 路线库（基于 RUN 手册整理，数字为约值）
+ *    minCash: 1=5万内 2=5–30万 3=30–100万 4=100万+
+ *    family: yes / limited / no
+ *    english: 0–2（2=英语环境友好）
+ * ============================================================ */
+const ROUTES = [
+  /* ---------- 数字游民 ---------- */
+  {
+    id: 'albania-nomad', country: '阿尔巴尼亚', flag: '🇦🇱', name: '数字游民统一许可',
+    category: 'nomad', threshold: '月入约 €330', family: 'yes', pr: '1 年可续，偏临时',
+    english: 0, needsLocal: false, minCash: 1, speed: 1, lowCost: 5, minimalStay: 2, easyEntry: 5,
+    temporary: true, summary: '欧洲门槛最低的数字游民许可，适合低预算试住。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/albania.md'
+  },
+  {
+    id: 'spain-nomad', country: '西班牙', flag: '🇪🇸', name: '数字游民签证',
+    category: 'nomad', threshold: '月入约 €2,442', family: 'yes', pr: '可通向永居',
+    english: 2, needsLocal: false, minCash: 2, speed: 3, lowCost: 3, minimalStay: 4, easyEntry: 3,
+    summary: '境内申请可直接拿 3 年居留，是主流数字游民路线里门槛较低的一条。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/spain.md'
+  },
+  {
+    id: 'portugal-nomad', country: '葡萄牙', flag: '🇵🇹', name: '数字游民签证 D8',
+    category: 'nomad', threshold: '月入约 €3,680', family: 'yes', pr: '可通向永居',
+    english: 2, needsLocal: false, minCash: 2, speed: 2, lowCost: 3, minimalStay: 4, easyEntry: 3,
+    summary: '续签后可累积永居年限，适合收入稳定、想长期留下的远程工作者。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/portugal.md'
+  },
+  {
+    id: 'croatia-nomad', country: '克罗地亚', flag: '🇭🇷', name: '数字游民临时居留',
+    category: 'nomad', threshold: '月入约 €3,622', family: 'yes', pr: '最长 18 个月，偏临时',
+    english: 1, needsLocal: false, minCash: 2, speed: 1, lowCost: 3, minimalStay: 3, easyEntry: 3,
+    temporary: true, summary: '境外工作收入免所得税，但最长 18 个月，不能续成长期身份。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/croatia.md'
+  },
+  {
+    id: 'malta-nomad', country: '马耳他', flag: '🇲🇹', name: '数字游民居留许可',
+    category: 'nomad', threshold: '年入约 €42,000', family: 'yes', pr: '最长 4 年，不通永居',
+    english: 2, needsLocal: false, minCash: 2, speed: 1, lowCost: 2, minimalStay: 3, easyEntry: 3,
+    temporary: true, summary: '英语环境，适合远程工作者带家庭住 1–4 年，但不通向永居。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/malta.md'
+  },
+  {
+    id: 'greece-nomad', country: '希腊', flag: '🇬🇷', name: '数字游民签证',
+    category: 'nomad', threshold: '月入约 €3,500（税后）', family: 'yes', pr: '可通向永居',
+    english: 2, needsLocal: false, minCash: 2, speed: 2, lowCost: 3, minimalStay: 4, easyEntry: 3,
+    summary: '签证 1 年后转 2 年居留，可长期续签，适合有家庭的远程工作者。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/greece.md'
+  },
+  {
+    id: 'hungary-white', country: '匈牙利', flag: '🇭🇺', name: '白卡（White Card）',
+    category: 'nomad', threshold: '月入约 €3,000（税后）', family: 'no', pr: '偏临时，只能续一次',
+    english: 1, needsLocal: false, minCash: 2, speed: 1, lowCost: 3, minimalStay: 3, easyEntry: 3,
+    temporary: true, note: '白卡不能带家属，且只能续一次。',
+    summary: '远程工作者的短期居留，门槛不高，但不适合拖家带口或长期规划。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/hungary.md'
+  },
+  {
+    id: 'montenegro-nomad', country: '黑山', flag: '🇲🇪', name: '数字游民居留许可',
+    category: 'nomad', threshold: '需证明足够生活资金', family: 'yes', pr: '2+2 年，可通向永居',
+    english: 1, needsLocal: false, minCash: 2, speed: 2, lowCost: 4, minimalStay: 4, easyEntry: 3,
+    summary: '非申根、用欧元，2+2 年期限在欧洲同类路线里较友好。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/montenegro.md'
+  },
+  {
+    id: 'slovenia-nomad', country: '斯洛文尼亚', flag: '🇸🇮', name: '数字游民许可',
+    category: 'nomad', threshold: '平均净工资 2 倍', family: 'yes', pr: '1 年，不可续',
+    english: 1, needsLocal: false, minCash: 2, speed: 1, lowCost: 3, minimalStay: 3, easyEntry: 2,
+    temporary: true, summary: '2025 年新开，家属可立即团聚，但居留只有 1 年且不可续。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/slovenia.md'
+  },
+
+  /* ---------- 技术工作 / 蓝卡 ---------- */
+  {
+    id: 'germany-blue', country: '德国', flag: '🇩🇪', name: '欧盟蓝卡',
+    category: 'work', threshold: '年薪 €50,700（紧缺 €45,934）', family: 'yes', pr: '21 个月（德语 B1）',
+    english: 2, needsLocal: true, minCash: 1, speed: 5, lowCost: 2, minimalStay: 1, easyEntry: 2,
+    note: '21 个月永居需要德语 B1；A1 则为 27 个月。',
+    summary: '欧洲最主流的技术移民路线，IT 无学历也能办，最快 21 个月永居。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/germany.md'
+  },
+  {
+    id: 'slovakia-blue', country: '斯洛伐克', flag: '🇸🇰', name: '欧盟蓝卡',
+    category: 'work', threshold: '月薪约 €1,944', family: 'yes', pr: '首卡 5 年，可转永居',
+    english: 1, needsLocal: false, minCash: 1, speed: 2, lowCost: 5, minimalStay: 1, easyEntry: 4,
+    summary: '蓝卡工资门槛全欧最低之一，适合预算有限、先拿长期居留的人。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/slovakia.md'
+  },
+  {
+    id: 'netherlands-hsm', country: '荷兰', flag: '🇳🇱', name: '高技术移民',
+    category: 'work', threshold: '月薪约 €4,357（30 岁以下）', family: 'yes', pr: '5 年',
+    english: 2, needsLocal: false, minCash: 1, speed: 2, lowCost: 2, minimalStay: 1, easyEntry: 2,
+    note: '需要荷兰移民局认可的雇主（recognised sponsor）。',
+    summary: '英语环境好，但必须找到认可雇主；30 岁以下薪资门槛更低。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/netherlands.md'
+  },
+  {
+    id: 'ireland-csep', country: '爱尔兰', flag: '🇮🇪', name: 'Critical Skills 工作许可',
+    category: 'work', threshold: '年薪 €40,904 起', family: 'yes', pr: '2 年可申请',
+    english: 2, needsLocal: false, minCash: 1, speed: 4, lowCost: 2, minimalStay: 1, easyEntry: 3,
+    summary: '英语国家，关键技能职业 2 年后可申请 Stamp 4，适合技术岗。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/ireland.md'
+  },
+  {
+    id: 'poland-work', country: '波兰', flag: '🇵🇱', name: '普通工作许可',
+    category: 'work', threshold: '最低工资起', family: 'yes', pr: '5 年',
+    english: 1, needsLocal: false, minCash: 1, speed: 2, lowCost: 5, minimalStay: 1, easyEntry: 5,
+    summary: '工作许可门槛低、生活成本低，适合先进入欧洲劳动力市场。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/poland.md'
+  },
+  {
+    id: 'finland-specialist', country: '芬兰', flag: '🇫🇮', name: '专家居留许可',
+    category: 'work', threshold: '月薪约 €3,937', family: 'yes', pr: '4 年（快速通道）',
+    english: 2, needsLocal: false, minCash: 1, speed: 3, lowCost: 3, minimalStay: 1, easyEntry: 3,
+    summary: '专家许可与蓝卡同门槛，快速通道约 2 周，适合有 offer 的技术人员。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/finland.md'
+  },
+  {
+    id: 'austria-rwr', country: '奥地利', flag: '🇦🇹', name: '红白红卡',
+    category: 'work', threshold: '蓝卡约 €55,678', family: 'yes', pr: '21 个月转 Plus 卡',
+    english: 1, needsLocal: true, minCash: 1, speed: 4, lowCost: 2, minimalStay: 1, easyEntry: 2,
+    note: '转 Plus 卡通常需要德语 A2/B1 等条件。',
+    summary: '积分制 + 蓝卡双通道，21 个月可转 Plus 卡，适合条件较好的技术人才。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/austria.md'
+  },
+
+  /* ---------- 留学转工作 ---------- */
+  {
+    id: 'germany-study', country: '德国', flag: '🇩🇪', name: '留学 → 工作 → 蓝卡',
+    category: 'study', threshold: '学费低，需生活费证明', family: 'yes', pr: '毕业后 18 个月找工作',
+    english: 2, needsLocal: true, minCash: 2, speed: 3, lowCost: 4, minimalStay: 1, easyEntry: 3,
+    note: '长期留下通常需要德语；英语授课项目也可，但就业面窄一些。',
+    summary: '公立大学学费低，毕业后 18 个月找工作，再转蓝卡。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/germany.md'
+  },
+  {
+    id: 'ireland-study', country: '爱尔兰', flag: '🇮🇪', name: '硕士 → 工作 → Stamp 4',
+    category: 'study', threshold: '学费较高，约 15–25 万人民币/年', family: 'yes', pr: '毕业后 2 年',
+    english: 2, needsLocal: false, minCash: 3, speed: 3, lowCost: 2, minimalStay: 1, easyEntry: 2,
+    summary: '英语国家，硕士毕业后 2 年找工作签证，再转 Critical Skills。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/ireland.md'
+  },
+  {
+    id: 'finland-study', country: '芬兰', flag: '🇫🇮', name: '留学 → 工作 → 永居',
+    category: 'study', threshold: '学费 + 生活费证明', family: 'yes', pr: '毕业后 2 年',
+    english: 2, needsLocal: false, minCash: 2, speed: 2, lowCost: 3, minimalStay: 1, easyEntry: 2,
+    summary: '毕业后 2 年找工作签证，工作满 4 年可申请永居。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/finland.md'
+  },
+
+  /* ---------- 创业 / 自雇 ---------- */
+  {
+    id: 'ireland-step', country: '爱尔兰', flag: '🇮🇪', name: 'STEP 创业签证',
+    category: 'startup', threshold: '约 €50,000 启动资金', family: 'yes', pr: '可转长期居留',
+    english: 2, needsLocal: false, minCash: 3, speed: 2, lowCost: 2, minimalStay: 2, easyEntry: 2,
+    summary: '英语国家创业路线，需要创新商业计划和启动资金。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/ireland.md'
+  },
+  {
+    id: 'estonia-startup', country: '爱沙尼亚', flag: '🇪🇪', name: '创业签证',
+    category: 'startup', threshold: '无固定资本要求', family: 'yes', pr: '可转长期居留',
+    english: 2, needsLocal: false, minCash: 2, speed: 2, lowCost: 3, minimalStay: 2, easyEntry: 3,
+    summary: '数字化程度高，创业签证 + 就业许可可转长期身份，门槛相对友好。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/estonia.md'
+  },
+  {
+    id: 'lithuania-startup', country: '立陶宛', flag: '🇱🇹', name: 'Startup Visa',
+    category: 'startup', threshold: '免资本要求', family: 'yes', pr: '可转长期居留',
+    english: 2, needsLocal: false, minCash: 1, speed: 2, lowCost: 4, minimalStay: 2, easyEntry: 3,
+    summary: 'Startup Visa 免资本要求，适合有项目但资金不多的创业者。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/lithuania.md'
+  },
+  {
+    id: 'netherlands-startup', country: '荷兰', flag: '🇳🇱', name: '自雇 / 初创签证',
+    category: 'startup', threshold: '需商业计划与资金证明', family: 'yes', pr: '5 年',
+    english: 2, needsLocal: false, minCash: 2, speed: 2, lowCost: 2, minimalStay: 1, easyEntry: 2,
+    summary: '英语环境好，但自雇许可审核严格，需要真实业务和商业计划。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/netherlands.md'
+  },
+
+  /* ---------- 被动收入 ---------- */
+  {
+    id: 'portugal-d7', country: '葡萄牙', flag: '🇵🇹', name: 'D7 被动收入签证',
+    category: 'passive', threshold: '月入约 €920', family: 'yes', pr: '5 年（入籍 10 年）',
+    english: 2, needsLocal: false, minCash: 2, speed: 2, lowCost: 4, minimalStay: 2, easyEntry: 4,
+    summary: '靠养老金、租金、股息等被动收入生活，门槛低，可带家属。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/portugal.md'
+  },
+  {
+    id: 'spain-nlv', country: '西班牙', flag: '🇪🇸', name: '非营利居留 NLV',
+    category: 'passive', threshold: '月入约 €2,400（IPREM 400%）', family: 'yes', pr: '5 年（入籍 10 年）',
+    english: 2, needsLocal: false, minCash: 2, speed: 2, lowCost: 3, minimalStay: 1, easyEntry: 3,
+    note: '不允许任何工作，包括远程工作；需每年住满 183 天。',
+    summary: '靠被动收入或存款在西班牙生活，不能工作，居住要求较严。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/spain.md'
+  },
+  {
+    id: 'greece-fip', country: '希腊', flag: '🇬🇷', name: '财务独立人士 FIP',
+    category: 'passive', threshold: '月入约 €3,500', family: 'yes', pr: '可转长期居留',
+    english: 2, needsLocal: false, minCash: 2, speed: 2, lowCost: 2, minimalStay: 2, easyEntry: 2,
+    summary: '靠境外稳定被动收入在希腊生活，适合退休或半退休人士。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/greece.md'
+  },
+  {
+    id: 'malta-grp', country: '马耳他', flag: '🇲🇹', name: '全球居留计划 GRP',
+    category: 'passive', threshold: '约 €275,000+（房产/租金+费用）', family: 'yes', pr: '永居',
+    english: 2, needsLocal: false, minCash: 4, speed: 3, lowCost: 1, minimalStay: 2, easyEntry: 2,
+    summary: '英语环境，靠房产/租金和年费换永居，适合预算较高的退休人群。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/malta.md'
+  },
+
+  /* ---------- 投资居留 ---------- */
+  {
+    id: 'greece-golden', country: '希腊', flag: '🇬🇷', name: '黄金签证',
+    category: 'invest', threshold: '€400,000 / €800,000 房产', family: 'yes', pr: '5 年（维持投资）',
+    english: 1, needsLocal: false, minCash: 4, speed: 2, lowCost: 1, minimalStay: 5, easyEntry: 2,
+    summary: '买房换 5 年居留，可续签；热门地区门槛已涨到 80 万欧。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/greece.md'
+  },
+  {
+    id: 'cyprus-pr', country: '塞浦路斯', flag: '🇨🇾', name: '投资永居',
+    category: 'invest', threshold: '约 €300,000 投资', family: 'yes', pr: '约 2 个月获批',
+    english: 2, needsLocal: false, minCash: 4, speed: 5, lowCost: 1, minimalStay: 5, easyEntry: 3,
+    summary: '30 万欧投资可快速拿永居，是欧洲少数“快而直接”的投资路线。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/cyprus.md'
+  },
+  {
+    id: 'hungary-guest', country: '匈牙利', flag: '🇭🇺', name: '访客投资者居留',
+    category: 'invest', threshold: '€250,000 基金', family: 'yes', pr: '10+10 年',
+    english: 1, needsLocal: false, minCash: 4, speed: 3, lowCost: 1, minimalStay: 5, easyEntry: 2,
+    note: '2026-11 有报道称匈牙利拟自 2027 年起停止该计划，递交前务必核实。',
+    summary: '25 万欧基金换 10+10 年居留，可工作；政策存在关闭动向。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/hungary.md'
+  },
+  {
+    id: 'malta-mprp', country: '马耳他', flag: '🇲🇹', name: 'MPRP 永居',
+    category: 'invest', threshold: '约 €110,000–470,000', family: 'yes', pr: '永居',
+    english: 2, needsLocal: false, minCash: 4, speed: 3, lowCost: 1, minimalStay: 5, easyEntry: 2,
+    summary: '英语环境，通过房产/租金+捐款拿永居，适合预算充足的家庭。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/malta.md'
+  },
+  {
+    id: 'portugal-golden', country: '葡萄牙', flag: '🇵🇹', name: '黄金签证（基金）',
+    category: 'invest', threshold: '约 €500,000 基金', family: 'yes', pr: '5 年（入籍 10 年）',
+    english: 2, needsLocal: false, minCash: 4, speed: 2, lowCost: 1, minimalStay: 5, easyEntry: 1,
+    note: '已不能通过买房申请，仍需注意政策继续收紧。',
+    summary: '基金投资换居留，不住也能维持；但房地产路径已关闭。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/portugal.md'
+  },
+  {
+    id: 'turkey-citizenship', country: '土耳其', flag: '🇹🇷', name: '投资入籍',
+    category: 'invest', threshold: '约 $400,000 房产', family: 'yes', pr: '直接入籍（非欧盟）',
+    english: 0, needsLocal: false, minCash: 4, speed: 5, lowCost: 1, minimalStay: 5, easyEntry: 2,
+    note: '拿到的是土耳其护照，不等于欧盟身份。',
+    summary: '买房直接申请入籍，速度快，但身份含金量与欧盟国家不同。',
+    link: 'https://github.com/BryceYuuu/RUN/blob/main/docs/europe/turkiye.md'
+  }
+];
+
+const GUIDE_LINKS = {
+  nomad: 'https://github.com/BryceYuuu/RUN/blob/main/docs/routes/digital-nomad.md',
+  work: 'https://github.com/BryceYuuu/RUN/blob/main/docs/routes/skilled-work.md',
+  startup: 'https://github.com/BryceYuuu/RUN/blob/main/docs/routes/startup-self-employed.md',
+  passive: 'https://github.com/BryceYuuu/RUN/blob/main/docs/routes/passive-income.md',
+  invest: 'https://github.com/BryceYuuu/RUN/blob/main/docs/routes/investment.md',
+  study: 'https://github.com/BryceYuuu/RUN/blob/main/docs/routes/study-to-work.md'
+};
+
+const CATEGORY_LABEL = {
+  nomad: '数字游民', work: '技术工作', startup: '创业 / 自雇',
+  passive: '被动收入', invest: '投资居留', study: '留学转工作'
+};
+
+/* Windows 的 Chrome 不渲染国旗 emoji，用国家代码徽章更稳 */
+const COUNTRY_CODE = {
+  '阿尔巴尼亚': 'AL', '安道尔': 'AD', '奥地利': 'AT', '比利时': 'BE', '保加利亚': 'BG',
+  '克罗地亚': 'HR', '塞浦路斯': 'CY', '捷克': 'CZ', '丹麦': 'DK', '爱沙尼亚': 'EE',
+  '芬兰': 'FI', '法国': 'FR', '德国': 'DE', '希腊': 'GR', '匈牙利': 'HU', '冰岛': 'IS',
+  '爱尔兰': 'IE', '意大利': 'IT', '拉脱维亚': 'LV', '列支敦士登': 'LI', '立陶宛': 'LT',
+  '卢森堡': 'LU', '马耳他': 'MT', '黑山': 'ME', '荷兰': 'NL', '挪威': 'NO', '波兰': 'PL',
+  '葡萄牙': 'PT', '罗马尼亚': 'RO', '斯洛伐克': 'SK', '斯洛文尼亚': 'SI', '西班牙': 'ES',
+  '瑞典': 'SE', '瑞士': 'CH', '土耳其': 'TR', '英国': 'GB'
+};
+
+const COMPAT = {
+  work: ['work'],
+  nomad: ['nomad'],
+  startup: ['startup'],
+  passive: ['passive', 'invest'],
+  invest: ['invest', 'passive'],
+  study: ['study', 'work']
+};
+
+/* ============================================================
+ * 3. 打分逻辑
+ * ============================================================ */
+function evaluate(route, answers) {
+  const income = answers.income;
+  const exact = route.category === income;
+  if (!exact && !(COMPAT[income] || []).includes(route.category)) return null;
+
+  let score = 10;
+  const reasons = [];
+  const warnings = [];
+
+  if (exact) {
+    score += 55;
+    reasons.push('收入来源直接匹配');
+  } else {
+    score += 15;
+    reasons.push('与你的主线相关');
+  }
+
+  // 预算
+  if (answers.budget < route.minCash) {
+    score -= 110;
+    warnings.push('资金门槛可能超出你的预算');
+  } else {
+    score += (answers.budget - route.minCash) * 4;
+    if (route.minCash <= 2) reasons.push('前期资金压力相对可控');
+    else reasons.push('预算可覆盖该路线的前期资金');
+  }
+
+  // 语言
+  const englishOnly = answers.language !== 'learn';
+  if (route.needsLocal) {
+    if (answers.language === 'learn') {
+      score += 12;
+      reasons.push('你愿意学当地语言，适合长期路线');
+    } else {
+      score -= 35;
+      warnings.push('长期身份通常需要当地语言（如德语 B1）');
+    }
+  }
+  if (route.english >= 2) {
+    score += englishOnly ? 18 : 8;
+    if (englishOnly) reasons.push('英语环境友好');
+  } else if (englishOnly) {
+    score -= 10;
+  }
+
+  // 家属
+  if (answers.family > 0) {
+    if (route.family === 'no') {
+      score -= 100;
+      warnings.push('该路线不能带家属');
+    } else if (route.family === 'limited') {
+      score -= 20;
+      warnings.push('家属政策需逐项核查');
+    } else {
+      score += 15;
+      reasons.push('支持家庭成员随行');
+    }
+  }
+
+  // 核心偏好
+  const p = answers.priority;
+  if (p === 'speed') {
+    score += route.speed * 7;
+    if (route.speed >= 4) reasons.push('拿身份速度较快');
+    if (route.speed <= 2) warnings.push('拿永居 / 入籍的周期偏长');
+  } else if (p === 'lowCost') {
+    score += route.lowCost * 7;
+    if (route.lowCost >= 4) reasons.push('前期成本较低');
+  } else if (p === 'english') {
+    score += route.english * 12;
+    if (route.english >= 2) reasons.push('英语环境匹配');
+    if (route.english <= 1) warnings.push('当地英语普及度一般');
+  } else if (p === 'minimalStay') {
+    score += route.minimalStay * 8;
+    if (route.minimalStay >= 4) reasons.push('居住要求较宽松');
+    else warnings.push('这类路线通常需要实际居住');
+  } else if (p === 'easyEntry') {
+    score += route.easyEntry * 7;
+    if (route.easyEntry >= 4) reasons.push('门槛较低，容易先拿到居留');
+  }
+
+  if (route.temporary) warnings.push('临时身份，未必能直接累积永居');
+  if (route.note) warnings.push(route.note);
+
+  return {
+    route,
+    score,
+    reasons: [...new Set(reasons)].slice(0, 3),
+    warnings: [...new Set(warnings)].slice(0, 2)
+  };
+}
+
+function rankRoutes(answers) {
+  const scored = [];
+  for (const route of ROUTES) {
+    const result = evaluate(route, answers);
+    if (result) scored.push(result);
+  }
+  scored.sort((a, b) => b.score - a.score);
+
+  // 优先保留非负分路线；若全部为负，则展示“最不差”的备选
+  const positive = scored.filter((item) => item.score >= 0);
+  const pool = positive.length ? positive : scored;
+
+  // 前三名尽量来自不同国家，避免三张卡片都是同一国
+  const picked = [];
+  const seen = new Set();
+  for (const item of pool) {
+    if (seen.has(item.route.country)) continue;
+    picked.push(item);
+    seen.add(item.route.country);
+    if (picked.length === 3) break;
+  }
+  return { top: picked, total: scored.length, allNegative: positive.length === 0 };
+}
+
+function matchLabel(score) {
+  if (score >= 140) return { text: '高度匹配', cls: 'high' };
+  if (score >= 105) return { text: '较匹配', cls: 'mid' };
+  if (score >= 70) return { text: '可考虑', cls: 'low' };
+  return { text: '备选', cls: 'low' };
+}
+
+function familyText(route) {
+  if (route.family === 'yes') return '可带家属';
+  if (route.family === 'limited') return '家属需核查';
+  return '不能带家属';
+}
+
+function languageText(route) {
+  if (route.english >= 2) return '英语友好';
+  if (route.needsLocal) return '需当地语言';
+  return '无硬性语言要求';
+}
+
+/* 暴露给 Node 做逻辑测试；浏览器里不影响使用 */
+if (typeof globalThis !== 'undefined') {
+  globalThis.__RUN_CHOOSER__ = { QUESTIONS, ROUTES, evaluate, rankRoutes };
+}
+</script>
+
+<script>
+/* ============================================================
+ * 4. 界面
+ * ============================================================ */
+(function () {
+  const app = document.getElementById('app');
+  const state = { income: null, budget: null, language: null, family: null, priority: null };
+  let current = 0;
+  let locked = false;
+
+  const byId = (id) => document.getElementById(id);
+
+  function renderStart() {
+    app.innerHTML = `
+      <section class="screen">
+        <span class="badge">RUN · 润 路线抉择器</span>
+        <h1>用 5 个问题，<br><span>找到适合你的移居路线</span></h1>
+        <p class="lead">基于 RUN 手册的 36 个欧洲国家、110 条路线整理。纯本地运行，不上传任何答案。</p>
+        <div class="stats">
+          <div class="stat"><b>36</b> 个欧洲国家</div>
+          <div class="stat"><b>110</b> 条路线</div>
+          <div class="stat"><b>399</b> 条来源</div>
+          <div class="stat"><b>5</b> 个问题</div>
+        </div>
+        <button class="primary" id="startBtn">开始测试 →</button>
+        <p class="fine">按中国大陆普通护照设计 · 结果仅供初筛，不构成移民 / 法律 / 投资建议</p>
+      </section>
+    `;
+    byId('startBtn').addEventListener('click', () => {
+      current = 0;
+      renderQuestion();
+    });
+  }
+
+  function renderQuestion() {
+    locked = false;
+    const q = QUESTIONS[current];
+    const selected = state[q.key];
+    const progress = ((current) / QUESTIONS.length) * 100;
+
+    app.innerHTML = `
+      <section class="screen">
+        <div class="question-card">
+          <div class="progress-head">
+            <span>第 ${current + 1} / ${QUESTIONS.length} 题</span>
+            <span>${Math.round(progress)}%</span>
+          </div>
+          <div class="progress"><i style="width:${progress}%"></i></div>
+          <h2>${q.title}</h2>
+          <p class="hint">${q.hint}</p>
+          <div class="options">
+            ${q.options.map((o) => `
+              <button class="option ${selected === o.value ? 'selected' : ''}" data-value="${o.value}" type="button">
+                <span class="opt-icon">${o.icon}</span>
+                <span class="opt-body">
+                  <b>${o.title}</b>
+                  <small>${o.desc}</small>
+                </span>
+                <span class="opt-check">✓</span>
+              </button>
+            `).join('')}
+          </div>
+          <div class="nav">
+            ${current > 0
+              ? '<button class="ghost" id="backBtn" type="button">← 上一题</button>'
+              : '<span></span>'}
+            <span class="fine">选择后自动进入下一题</span>
+          </div>
+        </div>
+      </section>
+    `;
+
+    app.querySelectorAll('.option').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (locked) return;
+        locked = true;
+        const raw = btn.dataset.value;
+        state[q.key] = (q.key === 'budget' || q.key === 'family') ? Number(raw) : raw;
+        btn.classList.add('selected');
+
+        window.setTimeout(() => {
+          if (current < QUESTIONS.length - 1) {
+            current += 1;
+            renderQuestion();
+          } else {
+            renderResults();
+          }
+        }, 170);
+      });
+    });
+
+    if (current > 0) {
+      byId('backBtn').addEventListener('click', () => {
+        current -= 1;
+        renderQuestion();
+      });
+    }
+  }
+
+  function answerLabel(key) {
+    const q = QUESTIONS.find((item) => item.key === key);
+    const opt = q && q.options.find((o) => o.value === state[key]);
+    return opt ? opt.title : '';
+  }
+
+  function renderResults() {
+    const { top, total, allNegative } = rankRoutes(state);
+    const answers = ['income', 'budget', 'language', 'family', 'priority']
+      .map(answerLabel)
+      .filter(Boolean);
+
+    if (!top.length) {
+      app.innerHTML = `
+        <section class="screen">
+          <span class="badge">测试结果</span>
+          <h2>没有找到合适的路线</h2>
+          <p class="hint">按当前条件，所有路线都在预算、家属或语言上有明显冲突。建议放宽预算，或先走工作 / 留学 / 数字游民路线。</p>
+          <button class="primary" id="restartBtn" type="button">重新测试</button>
+        </section>
+      `;
+      byId('restartBtn').addEventListener('click', () => {
+        current = 0;
+        for (const key of Object.keys(state)) state[key] = null;
+        renderStart();
+      });
+      return;
+    }
+
+    const budgetBlocked = top.every((item) =>
+      item.warnings.some((w) => w.includes('超出你的预算'))
+    );
+    const residenceConflict = state.priority === 'minimalStay' &&
+      top.every((item) => item.route.minimalStay < 4);
+
+    const cards = top.map((item, index) => {
+      const route = item.route;
+      const label = matchLabel(item.score);
+      const rankText = index === 0 ? '最匹配' : index === 1 ? '次选' : '备选';
+      return `
+        <article class="result-card ${index === 0 ? 'top' : ''}">
+          <span class="rank">${rankText}</span>
+          <div class="card-head">
+            <span class="flag" aria-hidden="true">${COUNTRY_CODE[route.country] || route.flag}</span>
+            <div>
+              <h3>${route.name}</h3>
+              <p>${route.country} · ${CATEGORY_LABEL[route.category]}</p>
+            </div>
+            <span class="match ${label.cls}">${label.text}</span>
+          </div>
+          <p class="summary">${route.summary}</p>
+          <div class="chips">
+            <span>💰 ${route.threshold}</span>
+            <span>👨‍👩‍👧 ${familyText(route)}</span>
+            <span>🛂 ${route.pr}</span>
+            <span>🗣️ ${languageText(route)}</span>
+          </div>
+          ${item.reasons.length ? `
+            <div class="reasons">
+              <b>为什么匹配</b>
+              ${item.reasons.map((r) => `<span>✓ ${r}</span>`).join('')}
+            </div>` : ''}
+          ${item.warnings.length ? `
+            <div class="warnings">
+              <b>需要注意</b>
+              ${item.warnings.map((w) => `<span>⚠ ${w}</span>`).join('')}
+            </div>` : ''}
+          <div class="card-actions">
+            <a class="doc-link" href="${route.link}" target="_blank" rel="noopener">查看国家页 →</a>
+            <a class="doc-link" href="${GUIDE_LINKS[route.category]}" target="_blank" rel="noopener">路线指南 →</a>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    app.innerHTML = `
+      <section class="screen">
+        <span class="badge">测试结果 · 共 ${total} 条候选</span>
+        <div class="result-head">
+          <h2>给你的 ${top.length} 条路线</h2>
+          <p class="hint">按你的收入来源、预算、语言、家属情况和核心偏好排序。</p>
+        </div>
+        <div class="answer-strip">
+          ${answers.map((a) => `<span>${a}</span>`).join('')}
+        </div>
+        ${allNegative || budgetBlocked ? `
+          <div class="global-warning">
+            ⚠ 你的预算低于这些路线的资金门槛。建议先考虑工作、留学或数字游民路线，或提高预算后再看投资 / 被动收入类。
+          </div>` : ''}
+        ${residenceConflict ? `
+          <div class="global-warning">
+            ⚠ 你选了“不想坐移民监”，但当前收入类型下的主流路线仍有居住要求。若预算允许，可考虑投资居留 / 黄金签证类（通常需 100 万+ 预算）。
+          </div>` : ''}
+        ${top.length < 3 ? `
+          <p class="result-note">只有 ${top.length} 条路线与你的条件基本匹配；其余路线在预算、家属或语言上有明显冲突，未列入。</p>` : ''}
+        <div class="result-list">${cards}</div>
+        <div class="result-actions">
+          <button class="primary" id="restartBtn" type="button">重新测试</button>
+          <button class="ghost" id="copyBtn" type="button">复制结果</button>
+        </div>
+        <p class="fine">数字为 2026-10 手册整理的约值，政策变化很快；点开官方来源核对后再做决定。</p>
+      </section>
+    `;
+
+    byId('restartBtn').addEventListener('click', () => {
+      current = 0;
+      for (const key of Object.keys(state)) state[key] = null;
+      renderStart();
+    });
+
+    byId('copyBtn').addEventListener('click', () => {
+      const lines = [
+        'RUN · 润 路线抉择结果',
+        '',
+        '你的情况：' + answers.join(' / '),
+        '',
+        ...top.map((item, i) => {
+          const r = item.route;
+          return [
+            `${i + 1}. ${COUNTRY_CODE[r.country] || r.flag} ${r.country} · ${r.name}`,
+            `   门槛：${r.threshold}`,
+            `   家属：${familyText(r)} ｜ 永居/身份：${r.pr}`,
+            `   链接：${r.link}`
+          ].join('\n');
+        }),
+        '',
+        '仅供初筛，不构成移民/法律/投资建议；以官方页面为准。'
+      ];
+      copyText(lines.join('\n'), byId('copyBtn'));
+    });
+  }
+
+  function copyText(text, button) {
+    const done = () => {
+      const old = button.textContent;
+      button.textContent = '已复制 ✓';
+      window.setTimeout(() => { button.textContent = old; }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+
+  function fallbackCopy(text, done) {
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.select();
+    try { document.execCommand('copy'); done(); } catch (e) { /* ignore */ }
+    document.body.removeChild(area);
+  }
+
+  renderStart();
+})();
+</script>
+</body>
+</html>
